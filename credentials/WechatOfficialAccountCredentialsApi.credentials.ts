@@ -65,9 +65,15 @@ export class WechatOfficialAccountCredentialsApi implements ICredentialType {
 		// 	}
 		// }
 
+		const baseUrl = credentials.baseUrl as string;
+		const requestBaseUrl =
+			baseUrl.startsWith('http://') || baseUrl.startsWith('https://')
+				? baseUrl
+				: `https://${baseUrl}`;
+
 		const res = (await this.helpers.httpRequest({
 			method: 'GET',
-			url: `https://${credentials.baseUrl}/cgi-bin/token?grant_type=client_credential&appid=${credentials.appid}&secret=${credentials.appsecret}`,
+			url: `${requestBaseUrl}/cgi-bin/token?grant_type=client_credential&appid=${credentials.appid}&secret=${credentials.appsecret}`,
 		})) as any;
 
 		console.log('preAuthentication', res);
@@ -111,7 +117,8 @@ export class WechatOfficialAccountCredentialsApi implements ICredentialType {
 	// The block below tells how this credential can be tested
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: '=https://{{$credentials.baseUrl}}',
+			baseURL:
+				'={{$credentials.baseUrl.startsWith("http://") || $credentials.baseUrl.startsWith("https://") ? $credentials.baseUrl : "https://" + $credentials.baseUrl}}',
 			url: '/cgi-bin/get_api_domain_ip',
 		},
 		rules: [

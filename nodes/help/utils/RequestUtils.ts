@@ -10,7 +10,11 @@ class RequestUtils {
 	) {
 		const credentials = await this.getCredentials('wechatOfficialAccountCredentialsApi');
 
-		options.baseURL = `https://${credentials.baseUrl}`;
+		const baseUrl = credentials.baseUrl as string;
+		options.baseURL =
+			baseUrl.startsWith('http://') || baseUrl.startsWith('https://')
+				? baseUrl
+				: `https://${baseUrl}`;
 
 		return this.helpers.requestWithAuthentication.call(this, 'wechatOfficialAccountCredentialsApi', options, {
 			// @ts-ignore
