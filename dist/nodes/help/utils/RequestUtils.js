@@ -21,9 +21,8 @@ class RequestUtils {
     static async request(options) {
         return RequestUtils.originRequest.call(this, options).then((text) => {
             const data = JSON.parse(text);
-            if (data.errcode && data.errcode === 42001) {
-                return RequestUtils.originRequest.call(this, options, true)
-                    .then((text) => {
+            if (data.errcode && (data.errcode === 42001 || data.errcode === 40001)) {
+                return RequestUtils.originRequest.call(this, options, true).then((text) => {
                     const data = JSON.parse(text);
                     if (data.errcode && data.errcode !== 0) {
                         throw new n8n_workflow_1.NodeOperationError(this.getNode(), `Request Error: ${data.errcode}, ${data.errmsg}`);

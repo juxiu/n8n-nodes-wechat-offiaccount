@@ -29,19 +29,17 @@ class RequestUtils {
 	static async request(this: IExecuteFunctions, options: IRequestOptions) {
 		return RequestUtils.originRequest.call(this, options).then((text) => {
 			const data: any = JSON.parse(text);
-			// 处理一次accesstoken过期的情况
-			if (data.errcode && data.errcode === 42001) {
-				return RequestUtils.originRequest.call(this, options, true)
-					.then((text) => {
-						const data: any = JSON.parse(text);
-						if (data.errcode && data.errcode !== 0) {
-							throw new NodeOperationError(
-								this.getNode(),
-								`Request Error: ${data.errcode}, ${data.errmsg}`,
-							);
-						}
-						return data;
-					});
+			if (data.errcode && (data.errcode === 42001 || data.errcode === 40001)) {
+				return RequestUtils.originRequest.call(this, options, true).then((text) => {
+					const data: any = JSON.parse(text);
+					if (data.errcode && data.errcode !== 0) {
+						throw new NodeOperationError(
+							this.getNode(),
+							`Request Error: ${data.errcode}, ${data.errmsg}`,
+						);
+					}
+					return data;
+				});
 			}
 
 			if (data.errcode && data.errcode !== 0) {
