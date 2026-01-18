@@ -1,6 +1,5 @@
-import { INodePropertyOptions } from 'n8n-workflow/dist/Interfaces';
+import { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import { IResource, ResourceOperations } from '../type/IResource';
-import { INodeProperties } from 'n8n-workflow';
 
 class ResourceBuilder {
 	resources: IResource[] = [];
@@ -8,6 +7,7 @@ class ResourceBuilder {
 	addResource(resource: INodePropertyOptions) {
 		this.resources.push({
 			...resource,
+			value: resource.value as string,
 			operations: [],
 		});
 	}
@@ -29,10 +29,14 @@ class ResourceBuilder {
 			type: 'options',
 			noDataExpression: true,
 			options: this.resources.map((item) => {
-				return {
-					...item,
-					operations: null,
+				const option: INodePropertyOptions = {
+					name: item.name,
+					value: item.value,
 				};
+				if (item.description) {
+					option.description = item.description;
+				}
+				return option;
 			}),
 			default: '',
 		});
@@ -50,10 +54,14 @@ class ResourceBuilder {
 					},
 				},
 				options: resource.operations.map((item) => {
-					return {
-						...item,
-						options: null,
+					const option: INodePropertyOptions = {
+						name: item.name,
+						value: item.value,
 					};
+					if (item.description) {
+						option.description = item.description;
+					}
+					return option;
 				}),
 				default: '',
 			});

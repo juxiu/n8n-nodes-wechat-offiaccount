@@ -1,5 +1,10 @@
 # 使用案例
 
+fork from https://github.com/other-blowsnow/n8n-nodes-wechat-offiaccount
+author: blowsnow
+
+增加了对请求协议的自定义
+
 ## URL验证案例
 ```json
 {
